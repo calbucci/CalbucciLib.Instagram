@@ -13,7 +13,7 @@ namespace CalbucciLib.Instagram
 {
     public class InstagramAuth
     {
-        [ThreadStatic] public static InstagramAuthError LastError;
+        [ThreadStatic] public static InstagramAuthError _LastError;
 
         // ====================================================================
         //
@@ -36,7 +36,7 @@ namespace CalbucciLib.Instagram
 
         public string GetAuthorizationUrl(InstagramScope scopes, string state = null, string redirectUri = null)
         {
-            LastError = null;
+            _LastError = null;
 
             StringBuilder sb = new StringBuilder(250);
             sb.Append("https://api.instagram.com/oauth/authorize/?response_type=code&client_id=");
@@ -61,7 +61,7 @@ namespace CalbucciLib.Instagram
 
         public InstagramToken ExchangeToken(Uri redirectUri, string originalRedirectUrl = null)
         {
-            LastError = null;
+            _LastError = null;
 
             var qss = redirectUri.Query;
 
@@ -69,7 +69,7 @@ namespace CalbucciLib.Instagram
 
             if (qs["error"] != null)
             {
-                LastError = new InstagramAuthError
+                _LastError = new InstagramAuthError
                 {
                     Error = qs["error"],
                     ErrorReason = qs["error_reason"],
@@ -103,19 +103,22 @@ namespace CalbucciLib.Instagram
             }
             catch (WebException wex)
             {
+                _LastError = new InstagramAuthError();
+                _LastError.Error = "Internal";
                 var resp = (HttpWebResponse)wex.Response;
                 if (resp != null)
                 {
+                    _LastError.ErrorReason = resp.StatusCode.ToString();
+
                     using (var sr = new StreamReader(resp.GetResponseStream()))
                     {
                         string content = sr.ReadToEnd();
-                        Logger.LogException(wex, content, data);
+                        _LastError.ErrorDescription = content;
+
+
                     }
                 }
-                else
-                {
-                    Logger.LogException(wex, data);
-                }
+
                 return null;
             }
         }
@@ -160,5 +163,7 @@ namespace CalbucciLib.Instagram
         public string ClientId { get; set; }
         public string ClientSecret { get; set; }
         public string RedirectUri { get; set; }
+
+        public InstagramAuthError LastError => _LastError;
     }
 }
