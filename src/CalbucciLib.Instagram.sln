@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.24720.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalbucciLib.Instagram", "CalbucciLib.Instagram\CalbucciLib.Instagram.csproj", "{3D6247BF-F3A9-4F57-9E5C-4EBDCE1A2771}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalbucciLib.Instagram.Tests", "CalbucciLib.Instagram.Tests\CalbucciLib.Instagram.Tests.csproj", "{04A37412-4441-4328-9AD8-B76D00FEF8B8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3D6247BF-F3A9-4F57-9E5C-4EBDCE1A2771}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3D6247BF-F3A9-4F57-9E5C-4EBDCE1A2771}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3D6247BF-F3A9-4F57-9E5C-4EBDCE1A2771}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3D6247BF-F3A9-4F57-9E5C-4EBDCE1A2771}.Release|Any CPU.Build.0 = Release|Any CPU
+		{04A37412-4441-4328-9AD8-B76D00FEF8B8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{04A37412-4441-4328-9AD8-B76D00FEF8B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{04A37412-4441-4328-9AD8-B76D00FEF8B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{04A37412-4441-4328-9AD8-B76D00FEF8B8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
