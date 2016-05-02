@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -58,7 +59,7 @@ namespace CalbucciLib.Instagram
             return sb.ToString();
         }
 
-        public InstagramAuth ExchangeToken(Uri redirectUri, string originalRedirectUrl = null)
+        public InstagramToken ExchangeToken(Uri redirectUri, string originalRedirectUrl = null)
         {
             LastError = null;
 
@@ -79,20 +80,43 @@ namespace CalbucciLib.Instagram
 
             string exchangeUrl = "https://api.instagram.com/oauth/access_token";
 
-            using (var wc = new WebClient())
+            string data = null;
+            try
             {
-                wc.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
-                StringBuilder data = new StringBuilder();
-                data.AppendFormat("client_id={0}", HttpUtility.UrlEncode(ClientId));
-                data.AppendFormat("&client_secret={0}", HttpUtility.UrlEncode(ClientSecret));
-                data.Append("&grand_type=authorization_code");
-                data.AppendFormat("&redirect_uri={0}", HttpUtility.UrlEncode(originalRedirectUrl));
-                data.AppendFormat("&code=" + HttpUtility.UrlEncode(qs["code"]));
+                using (var wc = new WebClient())
+                {
+                    wc.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
+                    StringBuilder sb = new StringBuilder();
+                    sb.AppendFormat("client_id={0}", HttpUtility.UrlEncode(ClientId));
+                    sb.AppendFormat("&client_secret={0}", HttpUtility.UrlEncode(ClientSecret));
+                    sb.Append("&grant_type=authorization_code");
+                    sb.AppendFormat("&redirect_uri={0}", HttpUtility.UrlEncode(originalRedirectUrl ?? RedirectUri));
+                    sb.AppendFormat("&code=" + HttpUtility.UrlEncode(qs["code"]));
 
-                var resp = wc.UploadString(exchangeUrl, data.ToString());
+                    data = sb.ToString();
 
-                var ia = JsonConvert.DeserializeObject<InstagramAuth>(resp);
-                return ia;
+                    var resp = wc.UploadString(exchangeUrl, data);
+
+                    var ia = JsonConvert.DeserializeObject<InstagramToken>(resp);
+                    return ia;
+                }
+            }
+            catch (WebException wex)
+            {
+                var resp = (HttpWebResponse)wex.Response;
+                if (resp != null)
+                {
+                    using (var sr = new StreamReader(resp.GetResponseStream()))
+                    {
+                        string content = sr.ReadToEnd();
+                        Logger.LogException(wex, content, data);
+                    }
+                }
+                else
+                {
+                    Logger.LogException(wex, data);
+                }
+                return null;
             }
         }
         
@@ -114,7 +138,7 @@ namespace CalbucciLib.Instagram
             if ((scope & InstagramScope.PublicContent) > 0)
                 items.Add("public_content");
             if ((scope & InstagramScope.FollowerList) > 0)
-                items.Add("folower_list");
+                items.Add("follower_list");
             if ((scope & InstagramScope.Comments) > 0)
                 items.Add("comments");
             if ((scope & InstagramScope.Relationships) > 0)

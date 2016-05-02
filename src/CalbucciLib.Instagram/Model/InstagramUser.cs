@@ -15,13 +15,14 @@ namespace CalbucciLib.Instagram.Model
         public string FullName { get; set; }
         [JsonProperty("profile_picture")]
         public string ProfilePicture { get; set; }
-        
+        public string Bio { get; set; }
+        public string Website { get; set; }
+
+
     }
 
     public class InstagramUser : InstagramBaseUser
     {
-        public string Bio { get; set; }
-        public string Website { get; set; }
         public InstagramUserCounts Counts { get; set; }
     }
 

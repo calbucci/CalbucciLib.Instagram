@@ -13,14 +13,11 @@ namespace CalbucciLib.Instagram
 {
     public class InstagramService
     {
-        [ThreadStatic]
-        protected static InstagramResponseMeta LastResponseMeta;
+        public InstagramResponseMeta LastResponseMeta { get; private set; }
 
-        [ThreadStatic]
-        protected static HttpStatusCode LastStatusCode;
+        public HttpStatusCode LastStatusCode { get; private set; }
 
-        [ThreadStatic]
-        protected static InstagramPagination LastPagination;
+        public InstagramPagination LastPagination { get; private set; }
 
         // ====================================================================
         //
@@ -486,5 +483,7 @@ namespace CalbucciLib.Instagram
         public string AuthToken { get; set; }
 
         public bool DidReachRateLimit => (int) LastStatusCode == 429 || LastResponseMeta?.ErrorType == "OAuthRateLimitException";
+        
+        
     }
 }
