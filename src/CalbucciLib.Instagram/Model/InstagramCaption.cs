@@ -6,12 +6,14 @@ using System.Threading.Tasks;
 
 namespace CalbucciLib.Instagram.Model
 {
-    public class InstagramComment
+    public class InstagramCaption
     {
         public DateTime CreatedTime { get; set; }
+
         public string Text { get; set; }
+
         public InstagramBaseUser From { get; set; }
-        public string Id { get; set; }
+
 
         protected string created_time
         {

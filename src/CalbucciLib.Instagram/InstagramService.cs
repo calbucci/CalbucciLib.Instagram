@@ -50,12 +50,16 @@ namespace CalbucciLib.Instagram
             return ExecuteGet<InstagramUser>($"/users/{userId}");
         }
 
-        public InstagramMedia GetMostRecentMedia(string userId = null, int count = 10, string minId = null, string maxId = null)
+        public List<InstagramMedia> GetMostRecentMedia(string userId = null, int count = 10, string minId = null, string maxId = null)
         {
             // /users/self/media/recent
             // /users/user-id/media/recent
+
+            if (userId == null)
+                userId = "self";
+
             var qs = BuildCountMinMax(count, minId, maxId);
-            return ExecuteGet<InstagramMedia>($"/users/{userId}/media/recent", qs);
+            return ExecuteGet<List<InstagramMedia>>($"/users/{userId}/media/recent", qs);
         }
 
 
@@ -76,6 +80,29 @@ namespace CalbucciLib.Instagram
             qs["q"] = q;
             qs["count"] = count;
             return ExecuteGet<List<InstagramBaseUser>>("/users/search", qs);
+        }
+
+        public string LookupUserId(string username)
+        {
+            if(!InstagramUtils.IsValidUsername(username))
+                return null;
+
+            using (var wc = new WebClient())
+            {
+                string url = $"https://www.instagram.com/{username}/";
+                string page = wc.DownloadString(url);
+                if (page == null)
+                    return null;
+
+                string idMark = "\"id\":\"";
+                int pos = page.IndexOf(idMark);
+                if (pos == -1)
+                    return null;
+                pos += idMark.Length;
+                int pos2 = page.IndexOf('\"', pos + 1);
+                string ids = page.Substring(pos, pos2 - pos);
+                return ids;
+            }
         }
 
 

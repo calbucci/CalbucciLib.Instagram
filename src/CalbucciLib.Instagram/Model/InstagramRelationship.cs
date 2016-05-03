@@ -13,6 +13,9 @@ namespace CalbucciLib.Instagram.Model
         public string OutgoingStatus { get; set; }
         [JsonProperty("incoming_status")]
         public string IncomingStatus { get; set; }
+
+        [JsonProperty("target_user_is_private")]
+        public bool TargetUserIsPrivate { get; set; }
     }
 
     public enum InstagramRelationshipAction

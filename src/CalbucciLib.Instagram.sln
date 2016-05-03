@@ -7,6 +7,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalbucciLib.Instagram", "Ca
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalbucciLib.Instagram.Tests", "CalbucciLib.Instagram.Tests\CalbucciLib.Instagram.Tests.csproj", "{04A37412-4441-4328-9AD8-B76D00FEF8B8}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{126D3D33-DE97-4AB8-8B9C-052027595E43}"
+	ProjectSection(SolutionItems) = preProject
+		AppSettingsSecrets.config = AppSettingsSecrets.config
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

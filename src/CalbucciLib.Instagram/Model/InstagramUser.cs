@@ -18,7 +18,6 @@ namespace CalbucciLib.Instagram.Model
         public string Bio { get; set; }
         public string Website { get; set; }
 
-
     }
 
     public class InstagramUser : InstagramBaseUser

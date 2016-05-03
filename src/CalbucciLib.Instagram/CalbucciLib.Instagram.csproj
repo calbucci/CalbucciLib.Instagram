@@ -46,7 +46,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="InstagramAuth.cs" />
+    <Compile Include="InstagramUtils.cs" />
     <Compile Include="Model\InstagramAuthError.cs" />
+    <Compile Include="Model\InstagramCaption.cs" />
     <Compile Include="Model\InstagramComment.cs" />
     <Compile Include="Model\InstagramLocation.cs" />
     <Compile Include="Model\InstagramMedia.cs" />

@@ -9,6 +9,7 @@ namespace CalbucciLib.Instagram.Model
 {
     public class InstagramMedia
     {
+        public string Attribution { get; set; }
         public string Type { get; set; }
         [JsonProperty("users_in_photo")]
         public List<InstagramUserInPhoto> UsersInPhoto { get; set; }
@@ -16,7 +17,7 @@ namespace CalbucciLib.Instagram.Model
         public string[] Tags { get; set; }
         public InstagramCount Comments { get; set; }
         public InstagramCount Likes { get; set; }
-        public string Caption { get; set; }
+        public InstagramCaption Caption { get; set; }
         public string Link { get; set; }
         public InstagramBaseUser User { get; set; }
         public DateTime CreatedTime { get; set; }
@@ -24,8 +25,16 @@ namespace CalbucciLib.Instagram.Model
         public InstagramMediaSet Videos { get; set; }
         public string Id { get; set; }
         public double? Distance { get; set; }
+        [JsonProperty("user_has_liked")]
+        public bool UserHasLiked { get; set; }
 
         public InstagramLocation Location { get; set; }
+
+        public string created_time
+        {
+            get { return InstagramUtils.ToEpoch(CreatedTime); }
+            set { CreatedTime = InstagramUtils.FromEpoch(value); }
+        }
 
 
     }
