@@ -9,7 +9,7 @@ namespace CalbucciLib.Instagram.Model
 {
     public class InstagramBaseUser
     {
-        public string Id { get; set; }
+        public long Id { get; set; }
         public string Username { get; set; }
         [JsonProperty("full_name")]
         public string FullName { get; set; }

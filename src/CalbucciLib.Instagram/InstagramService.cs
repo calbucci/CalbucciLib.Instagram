@@ -18,6 +18,8 @@ namespace CalbucciLib.Instagram
         public HttpStatusCode LastStatusCode { get; private set; }
 
         public InstagramPagination LastPagination { get; private set; }
+        public string LastDataJson { get; private set; }
+        public object LastData { get; private set; }
 
         // ====================================================================
         //
@@ -39,25 +41,26 @@ namespace CalbucciLib.Instagram
         public InstagramUser GetSelf()
         {
             // /users/self
-            return GetUser();
+            return ExecuteGet<InstagramUser>($"/users/self");
         }
 
-        public InstagramUser GetUser(string userId = null)
+        public InstagramUser GetUser(long userId)
         {
             // users/user-id
-            if (userId == null)
-                userId = "self";
             return ExecuteGet<InstagramUser>($"/users/{userId}");
         }
 
-        public List<InstagramMedia> GetMostRecentMedia(string userId = null, int count = 10, string minId = null, string maxId = null)
+        public List<InstagramMedia> GetMostRecentSelfMedia(int count = 10, string minId = null,
+            string maxId = null)
+        {
+            var qs = BuildCountMinMax(count, minId, maxId);
+            return ExecuteGet<List<InstagramMedia>>($"/users/self/media/recent", qs);
+        }
+
+        public List<InstagramMedia> GetMostRecentMedia(long userId, int count = 10, string minId = null, string maxId = null)
         {
             // /users/self/media/recent
             // /users/user-id/media/recent
-
-            if (userId == null)
-                userId = "self";
-
             var qs = BuildCountMinMax(count, minId, maxId);
             return ExecuteGet<List<InstagramMedia>>($"/users/{userId}/media/recent", qs);
         }
@@ -82,26 +85,35 @@ namespace CalbucciLib.Instagram
             return ExecuteGet<List<InstagramBaseUser>>("/users/search", qs);
         }
 
-        public string LookupUserId(string username)
+        public long LookupUserId(string username)
         {
             if(!InstagramUtils.IsValidUsername(username))
-                return null;
+                return 0;
 
-            using (var wc = new WebClient())
+            try
             {
-                string url = $"https://www.instagram.com/{username}/";
-                string page = wc.DownloadString(url);
-                if (page == null)
-                    return null;
+                using (var wc = new WebClient())
+                {
+                    string url = $"https://www.instagram.com/{username}/";
+                    string page = wc.DownloadString(url);
 
-                string idMark = "\"id\":\"";
-                int pos = page.IndexOf(idMark);
-                if (pos == -1)
-                    return null;
-                pos += idMark.Length;
-                int pos2 = page.IndexOf('\"', pos + 1);
-                string ids = page.Substring(pos, pos2 - pos);
-                return ids;
+                    string idMark = "\"id\":\"";
+                    int pos = page.IndexOf(idMark);
+                    if (pos == -1)
+                        return 0;
+                    pos += idMark.Length;
+                    int pos2 = page.IndexOf('\"', pos + 1);
+                    string ids = page.Substring(pos, pos2 - pos);
+                    return long.Parse(ids);
+                }
+            }
+            catch (WebException wex)
+            {
+                var resp = (HttpWebResponse) wex.Response;
+                if (resp.StatusCode == HttpStatusCode.NotFound)
+                    return 0;
+
+                throw wex;
             }
         }
 
@@ -142,7 +154,7 @@ namespace CalbucciLib.Instagram
         /// <summary>
         /// Get information about a relationship to another user
         /// </summary>
-        public InstagramRelationshipStatus GetRelationship(string userId)
+        public InstagramRelationshipStatus GetRelationship(long userId)
         {
             // /users/user-id/relationship
             return ExecuteGet<InstagramRelationshipStatus>($"/users/{userId}/relationship");
@@ -151,19 +163,19 @@ namespace CalbucciLib.Instagram
         /// <summary>
         /// Modify the relationship between the current user and the target user. 
         /// </summary>
-        public InstagramRelationshipStatus SetRelationship(string userId, InstagramRelationshipAction action)
+        public InstagramRelationshipStatus SetRelationship(long userId, InstagramRelationshipAction action)
         {
             // /users/user-id/relationship
             return ExecutePost<InstagramRelationshipStatus>($"/users/{userId}/relationship",
                 new Dictionary<string, object> { { "action", action.ToString().ToLower() } });
         }
 
-        public InstagramRelationshipStatus Follow(string userId)
+        public InstagramRelationshipStatus Follow(long userId)
         {
             return SetRelationship(userId, InstagramRelationshipAction.Follow);
         }
 
-        public InstagramRelationshipStatus Unfollow(string userId)
+        public InstagramRelationshipStatus Unfollow(long userId)
         {
             return SetRelationship(userId, InstagramRelationshipAction.Unfollow);
         }
@@ -432,6 +444,7 @@ namespace CalbucciLib.Instagram
 
         protected T ParseResponse<T>(string json)
         {
+            LastDataJson = json;
             var ir = JsonConvert.DeserializeObject<InstagramResponse<T>>(json);
             LastResponseMeta = ir.Meta;
             if (ir.Meta == null)
@@ -439,11 +452,21 @@ namespace CalbucciLib.Instagram
             else
                 LastStatusCode = (HttpStatusCode)ir.Meta.Code;
             LastPagination = ir.Pagination;
+            LastData = ir.Data;
             return ir.Data;
+        }
+
+        protected void ClearLasts()
+        {
+            LastData = null;
+            LastDataJson = null;
+            LastPagination = null;
+            LastResponseMeta = null;
         }
 
         protected T ExecuteGet<T>(string endpoint, Dictionary<string, object> qs = null) where T : class
         {
+            ClearLasts();
             var url = BuildUrl(endpoint, qs);
             try
             {
@@ -463,6 +486,7 @@ namespace CalbucciLib.Instagram
 
         protected T ExecutePost<T>(string endpoint, Dictionary<string, object> form) where T : class
         {
+            ClearLasts();
             var url = BuildUrl(endpoint, null);
             try
             {
@@ -485,6 +509,7 @@ namespace CalbucciLib.Instagram
 
         protected T ExecuteDelete<T>(string endpoint, Dictionary<string, object> qs = null) where T : class
         {
+            ClearLasts();
             var url = BuildUrl(endpoint, qs);
             try
             {

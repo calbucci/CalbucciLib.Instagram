@@ -32,7 +32,7 @@ namespace CalbucciLib.Instagram.Tests
         [TestMethod()]
         public void GetUser_Test()
         {
-            string userId = "807711"; // calbucci
+            var userId = 807711; // calbucci
             var user = Igs.GetUser(userId);
             Assert.IsNotNull(user);
             Assert.AreEqual("calbucci", user.Username);
@@ -53,7 +53,7 @@ namespace CalbucciLib.Instagram.Tests
         [TestMethod()]
         public void GetMostRecentMedia_Test()
         {
-            var rms = Igs.GetMostRecentMedia("807711");
+            var rms = Igs.GetMostRecentMedia(807711);
             Assert.IsTrue(rms != null && rms.Count > 0);
             var rm = rms[0];
             AssertMedia(rm);
@@ -110,17 +110,18 @@ namespace CalbucciLib.Instagram.Tests
         [TestMethod()]
         public void LookupUserId_Test()
         {
-            List<Tuple<string, string>> tests = new List<Tuple<string, string>>
+            List<Tuple<string, long>> tests = new List<Tuple<string, long>>
             {
-                new Tuple<string, string>("calbucci", "807711"),
-                new Tuple<string, string>("_karen", "835240"),
-                new Tuple<string, string>("listpediatest", "3195546986"),
-                new Tuple<string, string>("listpedia", "3062081591")
+                new Tuple<string, long>("calbucci", 807711),
+                new Tuple<string, long>("_karen", 835240),
+                new Tuple<string, long>("listpediatest", 3195546986),
+                new Tuple<string, long>("listpedia", 3062081591),
+                new Tuple<string, long>("hyperNotFound77539WhyNot", 0)
             };
 
             foreach (var test in tests)
             {
-                string id = Igs.LookupUserId(test.Item1);
+                var id = Igs.LookupUserId(test.Item1);
                 Assert.AreEqual(test.Item2, id);
             }
         }
@@ -130,18 +131,18 @@ namespace CalbucciLib.Instagram.Tests
         public void ListFollows_Test()
         {
             // Just to guarantee it
-            Igs.Unfollow("3062081591"); // @listpedia
-            var rel = Igs.GetRelationship("3062081591");
+            Igs.Unfollow(3062081591); // @listpedia
+            var rel = Igs.GetRelationship(3062081591);
             Assert.AreEqual(rel.OutgoingStatus, "none");
 
-            var fr = Igs.Follow("3062081591");
+            var fr = Igs.Follow(3062081591);
             Assert.AreEqual(fr.OutgoingStatus, "follows");
 
-            rel = Igs.GetRelationship("3062081591");
+            rel = Igs.GetRelationship(3062081591);
             Assert.AreEqual(rel.OutgoingStatus, "follows");
 
             // Clean up
-            Igs.Unfollow("3062081591");
+            Igs.Unfollow(3062081591);
 
         }
 
@@ -161,7 +162,7 @@ namespace CalbucciLib.Instagram.Tests
         [TestMethod()]
         public void GetRelationship_Test()
         {
-            var rel = Igs.GetRelationship("807711");
+            var rel = Igs.GetRelationship(807711);
             Assert.IsNotNull(rel);
 
             Assert.AreEqual("followed_by", rel.IncomingStatus); // @calbucci follows @listpediatest

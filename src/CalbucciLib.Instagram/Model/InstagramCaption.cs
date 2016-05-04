@@ -13,9 +13,10 @@ namespace CalbucciLib.Instagram.Model
         public string Text { get; set; }
 
         public InstagramBaseUser From { get; set; }
+        public string Id { get; set; }
 
 
-        protected string created_time
+        public string created_time
         {
             get { return InstagramUtils.ToEpoch(CreatedTime); }
             set { CreatedTime = InstagramUtils.FromEpoch(value); }
