@@ -18,6 +18,24 @@ namespace CalbucciLib.Instagram.Model
         public string Bio { get; set; }
         public string Website { get; set; }
 
+        public override string ToString()
+        {
+            return $"{Id}:{Username}";
+        }
+
+        public override bool Equals(object obj)
+        {
+            var rhs = obj as InstagramBaseUser;
+            if (rhs == null || rhs.Id == 0)
+                return false;
+            return rhs.Id == Id;
+        }
+
+        public override int GetHashCode()
+        {
+            return Id.GetHashCode();
+        }
+
     }
 
     public class InstagramUser : InstagramBaseUser
