@@ -33,6 +33,7 @@ namespace CalbucciLib.Instagram
                 "about",
                 "press",
                 "legal",
+                "p" 
             };
         }
 
@@ -96,6 +97,8 @@ namespace CalbucciLib.Instagram
                 return null;
 
             linkOrScreenname = linkOrScreenname.Trim();
+            if (linkOrScreenname.StartsWith("@"))
+                linkOrScreenname = linkOrScreenname.Substring(1);
 
             string username = linkOrScreenname;
             if (IsValidUsername(username))

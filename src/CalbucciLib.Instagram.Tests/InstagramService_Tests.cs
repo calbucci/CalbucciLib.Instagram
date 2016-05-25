@@ -159,15 +159,10 @@ namespace CalbucciLib.Instagram.Tests
         //    Assert.Fail();
         //}
 
-        [TestMethod()]
-        public void GetRelationship_Test()
-        {
-            var rel = Igs.GetRelationship(807711);
-            Assert.IsNotNull(rel);
-
-            Assert.AreEqual("followed_by", rel.IncomingStatus); // @calbucci follows @listpediatest
-            Assert.AreEqual("follows", rel.OutgoingStatus); // @listpediatest follows @calbucci
-        }
+        //[TestMethod()]
+        //public void GetRelationship_Test()
+        //{
+        //}
 
         //[TestMethod()]
         //public void SetRelationship_Test()

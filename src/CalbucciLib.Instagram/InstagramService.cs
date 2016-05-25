@@ -127,28 +127,29 @@ namespace CalbucciLib.Instagram
         /// <summary>
         /// Get the list of users this user follows
         /// </summary>
-        public List<InstagramBaseUser> ListFollows()
+        public List<InstagramBaseUser> ListFollows(int maxResults = 500)
         {
             // /users/self/follows
-            return ExecuteGet<List<InstagramBaseUser>>("/users/self/follows");
+            return ExecuteGetWithPagination<InstagramBaseUser>("/users/self/follows", maxResults);
         }
+
 
         /// <summary>
         /// Get the list of users this user is followed by.
         /// </summary>
-        public List<InstagramBaseUser> ListFollowedBy()
+        public List<InstagramBaseUser> ListFollowedBy(int maxResults = 500)
         {
             // /users/self/followed-by
-            return ExecuteGet<List<InstagramBaseUser>>("/users/self/followed-by");
+            return ExecuteGetWithPagination<InstagramBaseUser>("/users/self/followed-by", maxResults);
         }
 
         /// <summary>
         /// List the users who have requested this user's permission to follow.
         /// </summary>
-        public List<InstagramBaseUser> ListRequestedBy()
+        public List<InstagramBaseUser> ListRequestedBy(int maxResults = 100)
         {
             // /users/self/requested-by
-            return ExecuteGet<List<InstagramBaseUser>>("/users/self/requested-by");
+            return ExecuteGetWithPagination<InstagramBaseUser>("/users/self/requested-by", maxResults);
         }
 
         /// <summary>
@@ -225,10 +226,10 @@ namespace CalbucciLib.Instagram
         /// <summary>
         /// Get a list of recent comments on a media object. 
         /// </summary>
-        public List<InstagramComment> ListComments(string mediaId)
+        public List<InstagramComment> ListComments(string mediaId, int maxResults = 100)
         {
             // /media/media-id/comments
-            return ExecuteGet<List<InstagramComment>>($"/media/{mediaId}/comments");
+            return ExecuteGetWithPagination<InstagramComment>($"/media/{mediaId}/comments", maxResults);
         }
 
         /// <summary>
@@ -263,10 +264,10 @@ namespace CalbucciLib.Instagram
         /// <summary>
         /// Get a list of users who have liked this media.
         /// </summary>
-        public List<InstagramBaseUser> ListLikes(string mediaId)
+        public List<InstagramBaseUser> ListLikes(string mediaId, int maxResults = 500)
         {
             // /media/media-id/likes
-            return ExecuteGet<List<InstagramBaseUser>>($"/media/{mediaId}/likes");
+            return ExecuteGetWithPagination<InstagramBaseUser>($"/media/{mediaId}/likes", maxResults);
         }
 
 
@@ -462,18 +463,17 @@ namespace CalbucciLib.Instagram
             LastDataJson = null;
             LastPagination = null;
             LastResponseMeta = null;
+            LastStatusCode = HttpStatusCode.InternalServerError;
         }
 
-        protected T ExecuteGet<T>(string endpoint, Dictionary<string, object> qs = null) where T : class
+        protected T ExecuteGetByUrl<T>(string url) where T : class
         {
             ClearLasts();
-            var url = BuildUrl(endpoint, qs);
             try
             {
                 using (var wc = new WebClient())
                 {
                     var resp = wc.DownloadString(url);
-
                     return ParseResponse<T>(resp);
                 }
             }
@@ -482,6 +482,37 @@ namespace CalbucciLib.Instagram
                 LastStatusCode = ((HttpWebResponse)wex.Response).StatusCode;
                 return null;
             }
+        }
+
+        protected List<T> ExecuteGetWithPagination<T>(string endpoint, int maxResults, Dictionary<string, object> qs = null)
+            where T : class
+        {
+            var results = ExecuteGet<List<T>>(endpoint, qs);
+            if (results.Count >= maxResults)
+                return results.GetRange(0, maxResults);
+
+            do
+            {
+                if (LastPagination == null || LastPagination.NextUrl == null)
+                    break;
+
+                var batch = ExecuteGetByUrl<List<T>>(LastPagination.NextUrl);
+                if (batch == null || batch.Count == 0)
+                    break;
+
+                results.AddRange(batch);
+            } while (results.Count < maxResults);
+
+            if (results.Count >= maxResults)
+                results = results.GetRange(0, maxResults);
+            return results;
+
+        }
+
+        protected T ExecuteGet<T>(string endpoint, Dictionary<string, object> qs = null) where T : class
+        {
+            var url = BuildUrl(endpoint, qs);
+            return ExecuteGetByUrl<T>(url);
         }
 
         protected T ExecutePost<T>(string endpoint, Dictionary<string, object> form) where T : class
