@@ -97,13 +97,14 @@ namespace CalbucciLib.Instagram
                     string url = $"https://www.instagram.com/{username}/";
                     string page = wc.DownloadString(url);
 
-                    string idMark = "\"id\":\"";
+                    string idMark = "\"id\":";
                     int pos = page.IndexOf(idMark);
                     if (pos == -1)
                         return 0;
                     pos += idMark.Length;
-                    int pos2 = page.IndexOf('\"', pos + 1);
-                    string ids = page.Substring(pos, pos2 - pos);
+                    // Find the end of value marker
+                    int pos2 = page.IndexOfAny(new [] { ',', '}'}, pos + 1);
+                    string ids = page.Substring(pos, pos2 - pos).Trim(' ', '\t', '\r', '\n', '\'', '\"');
                     return long.Parse(ids);
                 }
             }
