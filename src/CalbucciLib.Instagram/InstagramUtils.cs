@@ -78,18 +78,18 @@ namespace CalbucciLib.Instagram
             return true;
         }
 
-        public static bool IsInstagramLink(string link)
-        {
-            if (string.IsNullOrWhiteSpace(link))
-                return false;
-
-            foreach (var prefix in InstagramLinks)
+            public static bool IsInstagramLink(string link)
             {
-                if (link.StartsWith(prefix, StringComparison.CurrentCultureIgnoreCase))
-                    return true;
+                if (string.IsNullOrWhiteSpace(link))
+                    return false;
+
+                foreach (var prefix in InstagramLinks)
+                {
+                    if (link.StartsWith(prefix, StringComparison.CurrentCultureIgnoreCase))
+                        return true;
+                }
+                return false;
             }
-            return false;
-        }
 
         public static string ExtractUsername(string linkOrScreenname)
         {
