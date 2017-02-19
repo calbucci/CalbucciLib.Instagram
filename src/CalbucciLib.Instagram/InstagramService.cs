@@ -89,6 +89,12 @@ namespace CalbucciLib.Instagram
             return ExecuteGet<List<InstagramBaseUser>>("/users/search", qs);
         }
 
+        public class Lookup_User
+        {
+            public InstagramBaseUser User { get; set; }
+
+        };
+
         public long LookupUserId(string username)
         {
             if(!InstagramUtils.IsValidUsername(username))
@@ -98,21 +104,40 @@ namespace CalbucciLib.Instagram
             {
                 using (var wc = new WebClient())
                 {
-                    string url = $"https://www.instagram.com/{username}/";
-                    string page = wc.DownloadString(url);
-
-                    string idMark = "\"owner\": {\"id\":"; // 
-                    int pos = page.IndexOf(idMark);
-                    if (pos != -1)
+                    // Method 1: Use the https://www.instagram.com/{username}/?__a=1
                     {
-                        pos += idMark.Length;
-                        // Find the end of value marker
-                        int pos2 = page.IndexOfAny(new[] {',', '}'}, pos + 1);
-                        string ids = page.Substring(pos, pos2 - pos).Trim(' ', '\t', '\r', '\n', '\'', '\"');
-                        var id = long.Parse(ids);
-                        return id;
+                        string url = $"https://www.instagram.com/{username}/?__a=1";
+                        string json = wc.DownloadString(url);
+                        try
+                        {
+                            var lu = JsonConvert.DeserializeObject<Lookup_User>(json);
+                            if (lu.User.Id > 0)
+                                return lu.User.Id;
+                        }
+                        catch { }
                     }
-                    
+
+
+                    // Method 2: Scrape it from the page
+                    {
+                        string url = $"https://www.instagram.com/{username}/";
+                        string page = wc.DownloadString(url);
+                        foreach (var idMark in new[] {"\"owner\": {\"id\":", "profilePage_"})
+                        {
+                            int pos = page.IndexOf(idMark);
+                            if (pos != -1)
+                            {
+                                pos += idMark.Length;
+                                // Find the end of value marker
+                                int pos2 = page.IndexOfAny(new[] {',', '}'}, pos + 1);
+                                string ids = page.Substring(pos, pos2 - pos).Trim(' ', '\t', '\r', '\n', '\'', '\"');
+                                long id = 0;
+                                if(long.TryParse(ids, out id) && id > 0)
+                                    return id;
+                            }
+                        }
+                    }
+
                     return 0;
                 }
             }

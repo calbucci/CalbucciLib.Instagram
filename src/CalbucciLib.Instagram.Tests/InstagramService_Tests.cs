@@ -182,95 +182,95 @@ namespace CalbucciLib.Instagram.Tests
         //    Assert.Fail();
         //}
 
-        [TestMethod()]
-        public void GetMedia_Test()
-        {
-            Assert.Fail();
-        }
+        //[TestMethod()]
+        //public void GetMedia_Test()
+        //{
+        //    Assert.Fail();
+        //}
 
-        [TestMethod()]
-        public void GetMediaByShortCode_Test()
-        {
-            Assert.Fail();
-        }
+        //[TestMethod()]
+        //public void GetMediaByShortCode_Test()
+        //{
+        //    Assert.Fail();
+        //}
 
-        [TestMethod()]
-        public void SearchMedia_Test()
-        {
-            Assert.Fail();
-        }
+        //[TestMethod()]
+        //public void SearchMedia_Test()
+        //{
+        //    Assert.Fail();
+        //}
 
-        [TestMethod()]
-        public void ListComments_Test()
-        {
-            Assert.Fail();
-        }
+        //[TestMethod()]
+        //public void ListComments_Test()
+        //{
+        //    Assert.Fail();
+        //}
 
-        [TestMethod()]
-        public void PostComment_Test()
-        {
-            Assert.Fail();
-        }
+        //[TestMethod()]
+        //public void PostComment_Test()
+        //{
+        //    Assert.Fail();
+        //}
 
-        [TestMethod()]
-        public void DeleteComment_Test()
-        {
-            Assert.Fail();
-        }
+        //[TestMethod()]
+        //public void DeleteComment_Test()
+        //{
+        //    Assert.Fail();
+        //}
 
-        [TestMethod()]
-        public void ListLikes_Test()
-        {
-            Assert.Fail();
-        }
+        //[TestMethod()]
+        //public void ListLikes_Test()
+        //{
+        //    Assert.Fail();
+        //}
 
-        [TestMethod()]
-        public void LikeMedia_Test()
-        {
-            Assert.Fail();
-        }
+        //[TestMethod()]
+        //public void LikeMedia_Test()
+        //{
+        //    Assert.Fail();
+        //}
 
-        [TestMethod()]
-        public void UnlikeMedia_Test()
-        {
-            Assert.Fail();
-        }
+        //[TestMethod()]
+        //public void UnlikeMedia_Test()
+        //{
+        //    Assert.Fail();
+        //}
 
-        [TestMethod()]
-        public void GetTagInformation_Test()
-        {
-            Assert.Fail();
-        }
+        //[TestMethod()]
+        //public void GetTagInformation_Test()
+        //{
+        //    Assert.Fail();
+        //}
 
-        [TestMethod()]
-        public void ListRecentTagged_Test()
-        {
-            Assert.Fail();
-        }
+        //[TestMethod()]
+        //public void ListRecentTagged_Test()
+        //{
+        //    Assert.Fail();
+        //}
 
-        [TestMethod()]
-        public void SearchTags_Test()
-        {
-            Assert.Fail();
-        }
+        //[TestMethod()]
+        //public void SearchTags_Test()
+        //{
+        //    Assert.Fail();
+        //}
 
-        [TestMethod()]
-        public void GetLocation_Test()
-        {
-            Assert.Fail();
-        }
+        //[TestMethod()]
+        //public void GetLocation_Test()
+        //{
+        //    Assert.Fail();
+        //}
 
-        [TestMethod()]
-        public void ListMediaByLocation_Test()
-        {
-            Assert.Fail();
-        }
+        //[TestMethod()]
+        //public void ListMediaByLocation_Test()
+        //{
+        //    Assert.Fail();
+        //}
 
-        [TestMethod()]
-        public void SearchLocation_Test()
-        {
-            Assert.Fail();
-        }
+        //[TestMethod()]
+        //public void SearchLocation_Test()
+        //{
+        //    Assert.Fail();
+        //}
 
     }
 }
