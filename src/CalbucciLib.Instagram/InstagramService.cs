@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Net;
+using System.Runtime.Remoting.Messaging;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using CalbucciLib.Instagram.Model;
@@ -20,6 +22,8 @@ namespace CalbucciLib.Instagram
         public InstagramPagination LastPagination { get; private set; }
         public string LastDataJson { get; private set; }
         public object LastData { get; private set; }
+
+        
 
         // ====================================================================
         //
@@ -97,15 +101,19 @@ namespace CalbucciLib.Instagram
                     string url = $"https://www.instagram.com/{username}/";
                     string page = wc.DownloadString(url);
 
-                    string idMark = "\"id\":";
+                    string idMark = "\"owner\": {\"id\":"; // 
                     int pos = page.IndexOf(idMark);
-                    if (pos == -1)
-                        return 0;
-                    pos += idMark.Length;
-                    // Find the end of value marker
-                    int pos2 = page.IndexOfAny(new [] { ',', '}'}, pos + 1);
-                    string ids = page.Substring(pos, pos2 - pos).Trim(' ', '\t', '\r', '\n', '\'', '\"');
-                    return long.Parse(ids);
+                    if (pos != -1)
+                    {
+                        pos += idMark.Length;
+                        // Find the end of value marker
+                        int pos2 = page.IndexOfAny(new[] {',', '}'}, pos + 1);
+                        string ids = page.Substring(pos, pos2 - pos).Trim(' ', '\t', '\r', '\n', '\'', '\"');
+                        var id = long.Parse(ids);
+                        return id;
+                    }
+                    
+                    return 0;
                 }
             }
             catch (WebException wex)
