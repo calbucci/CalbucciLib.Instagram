@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using CalbucciLib.Instagram.Model;
@@ -48,6 +49,21 @@ namespace CalbucciLib.Instagram.Tests
             Assert.IsTrue(user.Counts.Follows > 100);
             Assert.IsTrue(user.Counts.Media > 100);
 
+        }
+
+        [TestMethod]
+        public void GetPrivateUser_Test()
+        {
+            var userId = Igs.LookupUserId("dorian");
+            var user = Igs.GetUser(userId);
+            Assert.AreEqual(Igs.LastStatusCode, HttpStatusCode.Unauthorized);
+        }
+
+        [TestMethod]
+        public void GetInvalidUser_Test()
+        {
+            var user = Igs.GetUser(123456789);
+            Assert.AreEqual(Igs.LastStatusCode, HttpStatusCode.NotFound);
         }
 
         [TestMethod()]

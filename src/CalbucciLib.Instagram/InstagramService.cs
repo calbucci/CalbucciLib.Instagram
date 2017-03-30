@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Runtime.Remoting.Messaging;
@@ -491,6 +492,33 @@ namespace CalbucciLib.Instagram
             return ir.Data;
         }
 
+        protected void ParseError(WebException wex)
+        {
+            LastStatusCode = ((HttpWebResponse)wex.Response).StatusCode;
+
+            try
+            {
+                using (var sr = wex.Response.GetResponseStream())
+                using (var r = new StreamReader(sr))
+                {
+                    LastDataJson = r.ReadToEnd();
+                    var ir = JsonConvert.DeserializeObject<InstagramResponse<InstagramBaseUser>>(LastDataJson);
+                    LastData = ir;
+                    switch (ir.Meta.ErrorType.ToLower())
+                    {
+                        case "apinotallowederror":
+                            LastStatusCode = HttpStatusCode.Unauthorized;
+                            break;
+                        case "apinotfounderror":
+                            LastStatusCode = HttpStatusCode.NotFound;
+                            break;
+                    }
+                }
+            }
+            catch { }
+
+        }
+
         protected void ClearLasts()
         {
             LastData = null;
@@ -513,7 +541,7 @@ namespace CalbucciLib.Instagram
             }
             catch (WebException wex)
             {
-                LastStatusCode = ((HttpWebResponse)wex.Response).StatusCode;
+                ParseError(wex);
                 return null;
             }
         }
@@ -566,7 +594,7 @@ namespace CalbucciLib.Instagram
             }
             catch (WebException wex)
             {
-                LastStatusCode = ((HttpWebResponse)wex.Response).StatusCode;
+                ParseError(wex);
                 return null;
             }
         }
@@ -586,7 +614,7 @@ namespace CalbucciLib.Instagram
             }
             catch (WebException wex)
             {
-                LastStatusCode = ((HttpWebResponse)wex.Response).StatusCode;
+                ParseError(wex);
                 return null;
             }
         }
