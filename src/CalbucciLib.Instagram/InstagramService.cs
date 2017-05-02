@@ -550,6 +550,9 @@ namespace CalbucciLib.Instagram
             where T : class
         {
             var results = ExecuteGet<List<T>>(endpoint, qs);
+            if(results == null)
+                return new List<T>();
+
             if (results.Count >= maxResults)
                 return results.GetRange(0, maxResults);
 
